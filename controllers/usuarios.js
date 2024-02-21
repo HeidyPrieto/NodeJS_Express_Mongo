@@ -2,8 +2,20 @@ const express = require('express');
 const Usuario = require('../models/usuario_model');
 const ruta = express.Router();
 const Joi = require('@hapi/joi');
-ruta.get('/', (req,res)=>{
-    res.json('respuesta a petición GET de USUARIOS funcionando correctamente...');
+
+
+// Endpoint de tipo GET para el recurso usuarios. Lista todos los usuarios
+ruta.get('/',(req, res) =>{
+    let resultado = listarUsuarioActivos();
+    resultado.then(usuarios => {
+    res.json(usuarios)
+    }).catch(err => {
+    res.status(400).json(
+        {
+            err
+        }
+    )
+    })
 });
 
 
@@ -99,4 +111,23 @@ async function desactivarUsuario(email){
         } 
     },{new: true});
     return usuario;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Función asíncrona para listar todos los usuarios activos
+async function listarUsuarioActivos(){
+    let usuarios = await Usuario.find({"estado": true});
+    return usuarios;
 }
