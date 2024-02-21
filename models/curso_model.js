@@ -5,7 +5,7 @@ const mongoose = require( 'mongoose');
     required: true
     },
     descripcion: {
-    type:string,
+    type:String,
     required : false
 },
     estado: {
