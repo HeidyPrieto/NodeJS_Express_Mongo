@@ -2,8 +2,13 @@ const express = require('express');
 const Curso = require('../models/curso_model');
 const Joi = require('@hapi/joi');
 const ruta = express.Router();
-ruta.get('/', (req,res)=>{
-    res.json('respuesta a petición GET de CURSOS funcionando correctamente...');
+ruta.get('/', (req,res) => {
+    let resultado =  listarCursosActivos();
+    resultado.then(cursos => {
+        res.json(cursos);
+    }).catch(err => {
+        res.status(400).json(err);
+    })
 });
 
 module.exports = ruta;
@@ -33,7 +38,7 @@ res.status(400).json(err)
 })
 })
 
-// Endpoint de tipo DELE TE para el recurso CURSOS
+// Endpoint de tipo DELETE para el recurso CURSOS
 ruta.delete('/:id', (req, res) => {
     let resultado = desactivarCurso(req.params.id);
     resultado.then(curso => {
@@ -75,4 +80,10 @@ async function desactivarCurso(id){
     }
      }, {new: true});
     return curso;
+}
+
+// Función asíncrona para listar los cursos activos
+async function listarCursosActivos(){
+    let cursos = await Curso.find({"estado": true});
+     return cursos;
 }
